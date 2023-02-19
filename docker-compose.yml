@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  shadowsocks:
+    image: dockage/shadowsocks-server:latest
+    ports:
+      - "7004:8388"
+    environment:
+      - SS_PASSWORD=password
+      - SS_METHOD=aes-256-cfb
+  
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/ssl/:/root/ssl/
+    ports:
+      - "10080:80"
+      - "10443:443"
+    environment:
+      - NGINX_PORT=80
+    links:
+      - flask
+
+  flask:
+    build: ./flask/
+    volumes:
+      - ./flask:/flask
